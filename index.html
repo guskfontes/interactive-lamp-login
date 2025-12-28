@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Data Engineer - Cabo Corrigido</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+      :root {
+        /* --- CORES --- */
+        --bg-off: #1b1b2f;
+        --bg-on: #162447;
+
+        --lamp-off: #1f4068;
+        --lamp-on: #00d2fc;
+
+        --cord-color: #e43f5a;
+        --wire-color: #444;
+        --text-color: #fff;
+      }
+
+      body,
+      html {
+        margin: 0;
+        height: 100%;
+        font-family: 'Poppins', sans-serif;
+        overflow: hidden;
+        background-color: var(--bg-off);
+        color: var(--text-color);
+        transition: background-color 0.8s ease;
+      }
+
+      body.light-on {
+        background-color: var(--bg-on);
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+        width: 100%;
+      }
+
+      /* --- LADO ESQUERDO --- */
+      .side-lamp {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 10;
+      }
+
+      /* Container da lâmpada que segura tudo */
+      .hanging-lamp {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* O Fio que vai até o teto */
+      .wire-hanger {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100vh;
+        background: var(--wire-color);
+        z-index: 1;
+      }
+
+      /* A Cúpula */
+      .lamp-shade {
+        width: 170px; /* Um pouco mais larga para esconder bem */
+        height: 130px;
+        background: var(--lamp-off);
+        border-radius: 90px 90px 15px 15px;
+        position: relative;
+        z-index: 20; /* Importante: Cúpula na FRENTE do cabo */
+        transition: all 0.4s ease;
+      }
+
+      body.light-on .lamp-shade {
+        background: var(--lamp-on);
+        box-shadow: 0 0 120px var(--lamp-on), 0 0 200px rgba(0, 210, 252, 0.3);
+      }
+
+      /* --- CORDINHA (CORREÇÃO AQUI) --- */
+      .switch-cord {
+        position: absolute;
+        /* Começa bem mais pra cima, escondido dentro da cúpula */
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5; /* Atrás da cúpula (z-index 20), mas na frente do fundo */
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+
+        transform-origin: top center;
+        animation: swing 3.5s infinite ease-in-out;
+      }
+
+      .switch-cord.pulling {
+        animation: pull-anim 0.5s ease forwards;
+      }
+
+      .cord-line {
+        width: 4px;
+        /* AUMENTADO MUITO: Para garantir que não saia */
+        height: 300px;
+        background: var(--cord-color);
+      }
+
+      .cord-handle {
+        width: 20px;
+        height: 35px;
+        background: var(--cord-color);
+        border-radius: 10px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes pull-anim {
+        0% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(60px);
+        } /* Puxa forte */
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      @keyframes swing {
+        0%,
+        100% {
+          transform: translateX(-50%) rotate(1deg);
+        }
+        50% {
+          transform: translateX(-50%) rotate(-1deg);
+        }
+      }
+
+      /* --- LADO DIREITO --- */
+      .side-form {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+      }
+
+      .login-wrapper {
+        width: 100%;
+        max-width: 350px;
+        padding: 50px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+        pointer-events: none;
+      }
+
+      body.light-on .login-wrapper {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+      }
+
+      h1 {
+        margin: 0 0 30px 0;
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: var(--lamp-on);
+        text-shadow: 0 0 20px rgba(0, 210, 252, 0.5);
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        color: #bbb;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 25px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--lamp-on);
+      }
+
+      button {
+        width: 100%;
+        padding: 16px;
+        background: var(--lamp-on);
+        color: #0b0c10;
+        border: none;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        text-transform: uppercase;
+      }
+
+      button:hover {
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+  <body id="main-body">
+    <div class="container">
+      <div class="side-lamp">
+        <div class="hanging-lamp">
+          <div class="wire-hanger"></div>
+
+          <div class="lamp-shade"></div>
+
+          <div class="switch-cord" onclick="pullCord()">
+            <div class="cord-line"></div>
+            <div class="cord-handle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-form">
+        <div class="login-wrapper">
+          <h1>Bem-vindo</h1>
+          <form onsubmit="event.preventDefault(); alert('Conectando...');">
+            <label>Usuário</label>
+            <input type="text" placeholder="" />
+            <label>Senha</label>
+            <input type="password" placeholder="" />
+            <button type="submit">Entrar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function pullCord() {
+        const body = document.getElementById('main-body');
+        const cord = document.querySelector('.switch-cord');
+
+        cord.classList.remove('pulling');
+        void cord.offsetWidth;
+        cord.classList.add('pulling');
+
+        setTimeout(() => {
+          body.classList.toggle('light-on');
+        }, 250);
+      }
+    </script>
+  </body>
+</html>
